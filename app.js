@@ -21,7 +21,7 @@ var fragmentShaderText =
 ].join('\n');
 
 var InitDemo = function() {
-  console.log(vertexShaderText);
+  // console.log(vertexShaderText);
 
   var canvas = document.getElementById('game-surface');
   var gl = canvas.getContext('webgl');
@@ -48,5 +48,40 @@ var InitDemo = function() {
   gl.shaderSource(fragmentShader, fragmentShaderText);
 
   gl.compileShader(vertexShader);
+  if (!gl.getShaderParameter(vertexShader, gl.COMPILE_STATUS)) {
+    console.error("Error compiling vertex shader!", gl.getShaderInfoLog(vertexShader));
+    return;
+  }
+
   gl.compileShader(fragmentShader);
+  if (!gl.getShaderParameter(fragmentShader, gl.COMPILE_STATUS)) {
+    console.error("Error compiling fragment shader!", gl.getShaderInfoLog(fragmentShader));
+    return;
+  }
+
+  var program = gl.createProgram();
+  gl.attachShader(program, vertexShader);
+  gl.attachShader(program, fragmentShader);
+  gl.linkProgram(program);
+  if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
+    console.error("Error linking program", gl.getProgramInfoLog(program));
+    return;
+  }
+
+  gl.validateProgram(program);
+  if (!gl.getProgramParameter(program, get.VALIDATE_STATUS)) {
+    console.error("ERROR validating program", gl.getProgramInfoLog(program));
+    return;
+  }
+
+  //
+  // Create buffer
+  //
+
+  var triangleVertices =
+  [ // X, Y
+    0.0, 0.5,
+    -0.5, -0.5,
+    0.5, -0.5
+  ]
 };
